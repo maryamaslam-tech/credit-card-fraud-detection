@@ -4,6 +4,13 @@ A Machine Learning based web application that detects potentially fraudulent cre
 
 The project uses a React frontend and FastAPI backend. Users can enter transaction details manually or upload a CSV file to receive fraud predictions.
 
+## Live Demo
+
+- **Frontend:** https://credit-card-fraud-detection-alpha-five.vercel.app/
+- **Backend API:** https://credit-card-fraud-detection.ethiodeploy.app/
+- **API Documentation:** https://credit-card-fraud-detection.ethiodeploy.app/docs
+- **GitHub Repository:** https://github.com/maryamaslam-tech/credit-card-fraud-detection
+
 ## Features
 
 - Manual transaction fraud prediction
@@ -13,6 +20,7 @@ The project uses a React frontend and FastAPI backend. Users can enter transacti
 - Fraud and legitimate transaction classification
 - Input validation and error handling
 - Interactive dashboard
+- Login page
 
 ## Technology Stack
 
@@ -29,7 +37,7 @@ The project uses a React frontend and FastAPI backend. Users can enter transacti
 - FastAPI
 - Uvicorn
 - Pydantic
-
+- Python-dotenv
 
 ### Frontend
 - React
@@ -38,14 +46,13 @@ The project uses a React frontend and FastAPI backend. Users can enter transacti
 - Tailwind CSS
 - Lucide React
 
-
 ## Machine Learning Workflow
 
 1. Load and understand the dataset.
 2. Perform Exploratory Data Analysis (EDA).
 3. Analyze fraud and legitimate transaction patterns.
 4. Select relevant features.
-5. Split data into training and testing sets.
+5. Split data into training and testing sets using stratification.
 6. Apply StandardScaler using a Scikit-learn Pipeline.
 7. Train a Logistic Regression classifier.
 8. Evaluate the model using:
@@ -71,17 +78,30 @@ The model uses seven input features:
 | used_pin_number | Whether a PIN was used |
 | online_order | Whether the transaction was an online order |
 
-Target column: `fraud`
+**Target column:** `fraud`
+
+The target identifies whether a transaction is fraudulent or legitimate.
+
+The original dataset contains approximately one million transaction records.
 
 ## Model Evaluation
 
 The project uses Logistic Regression for binary classification.
 
-Evaluation includes precision, recall, F1-score, confusion matrix and ROC-AUC.
+The model was evaluated using a separate test split.
 
-The application uses a configurable classification threshold, with a default value of 0.30.
+| Metric | Result |
+|---|---:|
+| ROC-AUC | 0.9670 |
+| Precision (Fraud, threshold 0.30) | 81.17% |
+| Recall (Fraud, threshold 0.30) | 77.82% |
+| F1-score (Fraud, threshold 0.30) | 79.46% |
 
-Note: Model performance and threshold selection should be interpreted in the context of fraud detection, where missing fraudulent transactions and false alerts both matter.
+The application uses a configurable classification threshold, with a default value of `0.30`.
+
+A lower threshold can identify more fraudulent transactions but may also increase false positive predictions. Threshold selection involves balancing fraud detection and false alerts.
+
+**Note:** These results are from experiments on the test split. Threshold selection should ideally be performed using a validation set for a more reliable final evaluation.
 
 ## Project Structure
 
@@ -115,8 +135,8 @@ fraud_detection/
 ### 1. Clone the repository
 
 ```bash
-git clone YOUR_GITHUB_REPOSITORY_URL
-cd fraud_detection
+git clone https://github.com/maryamaslam-tech/credit-card-fraud-detection.git
+cd credit-card-fraud-detection
 ```
 
 ### 2. Create and activate a Python virtual environment
@@ -134,7 +154,20 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### 4. Run the FastAPI backend
+### 4. Configure backend environment variables
+
+Create a `.env` file inside the `backend` folder:
+
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_own_password
+```
+
+Use your own password. Do not commit this file to GitHub.
+
+### 5. Run the FastAPI backend
+
+From the project root directory:
 
 ```bash
 uvicorn backend.main:app --reload
@@ -142,19 +175,15 @@ uvicorn backend.main:app --reload
 
 Backend API:
 
-```text
-http://127.0.0.1:8000
-```
+`http://127.0.0.1:8000`
 
 API documentation:
 
-```text
-http://127.0.0.1:8000/docs
-```
+`http://127.0.0.1:8000/docs`
 
-### 5. Configure the frontend
+### 6. Configure the frontend
 
-Create a `.env` file inside the frontend folder:
+Create a `.env` file inside the `frontend` folder:
 
 ```env
 VITE_API_URL=http://127.0.0.1:8000
@@ -175,11 +204,11 @@ npm run dev
 
 ## Deployment
 
-Planned deployment architecture:
+The application is deployed using the following services:
 
-- Frontend: Vercel
-- Backend: Render
-- Source code: GitHub
+- **Frontend:** Vercel
+- **Backend:** EthioDeploy
+- **Source Code:** GitHub
 
 The React frontend communicates with the FastAPI backend through HTTP API requests.
 
@@ -187,5 +216,7 @@ The React frontend communicates with the FastAPI backend through HTTP API reques
 
 - The trained model file `fraud_detection_model.pkl` is required by the backend.
 - The original training dataset and sample CSV files are kept locally and excluded from Git using `.gitignore`.
-- The Jupyter Notebook contains the EDA, model training and evaluation workflow.
-- The application is an educational machine learning project and should not be treated as a production-grade financial fraud prevention system.
+- The Jupyter Notebook contains the EDA, model training, and evaluation workflow.
+- Backend environment variables must be configured separately on the deployment platform.
+- The current login implementation verifies credentials but does not provide token-based authentication or protect the prediction endpoints.
+- This is an educational machine learning project and should not be treated as a production-grade financial fraud prevention system.
