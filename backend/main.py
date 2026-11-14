@@ -65,7 +65,10 @@ app = FastAPI(title="Credit Card Fraud Detection API")
 # CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+    "http://localhost:5173",
+    "https://credit-card-fraud-detection-alpha-five.vercel.app"
+]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
